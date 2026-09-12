@@ -2,6 +2,14 @@
 <?php include __DIR__ . '/../partials/navbar.php'; ?>
 
 <div class="container my-5">
+
+    <?php if (!empty($flash)) : ?>
+        <div class="alert alert-<?= $flash['type'] === 'success' ? 'success' : 'danger' ?> alert-dismissible fade show" role="alert">
+            <?= htmlspecialchars($flash['message']) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
     <div class="card shadow-sm border-0">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
             <h5 class="mb-0 fw-bold">Daftar Mahasiswa</h5>

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Core\Database;
 use mysqli;
+use Exception;
 
 class MahasiswaRepository
 {
@@ -34,7 +35,10 @@ class MahasiswaRepository
             $stmt = $this->db->prepare($sql);
         }
 
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            throw new Exception('Query SELECT gagal: ' . $stmt->error);
+        }
+
         $result = $stmt->get_result();
         while ($row = $result->fetch_assoc()) {
             $data[] = $row;
@@ -49,7 +53,11 @@ class MahasiswaRepository
     {
         $stmt = $this->db->prepare("SELECT * FROM mahasiswa WHERE id = ?");
         $stmt->bind_param('i', $id);
-        $stmt->execute();
+
+        if (!$stmt->execute()) {
+            throw new Exception('Query SELECT gagal: ' . $stmt->error);
+        }
+
         $row = $stmt->get_result()->fetch_assoc();
         $stmt->close();
 
@@ -67,7 +75,11 @@ class MahasiswaRepository
             $stmt = $this->db->prepare("SELECT id FROM mahasiswa WHERE nim = ?");
             $stmt->bind_param('s', $nim);
         }
-        $stmt->execute();
+
+        if (!$stmt->execute()) {
+            throw new Exception('Query SELECT gagal: ' . $stmt->error);
+        }
+
         $found = $stmt->get_result()->fetch_assoc();
         $stmt->close();
 
@@ -86,7 +98,11 @@ class MahasiswaRepository
             $data['nim'], $data['nama'], $data['email'],
             $data['prodi_id'], $data['angkatan'], $data['status']
         );
-        $stmt->execute();
+
+        if (!$stmt->execute()) {
+            throw new Exception('Query INSERT gagal: ' . $stmt->error);
+        }
+
         $id = $this->db->insert_id; // ambil id yang baru dibuat
         $stmt->close();
 
@@ -106,10 +122,14 @@ class MahasiswaRepository
             $data['nim'], $data['nama'], $data['email'],
             $data['prodi_id'], $data['angkatan'], $data['status'], $id
         );
-        $ok = $stmt->execute();
+
+        if (!$stmt->execute()) {
+            throw new Exception('Query UPDATE gagal: ' . $stmt->error);
+        }
+
         $stmt->close();
 
-        return $ok;
+        return true;
     }
 
     // Hapus data mahasiswa
@@ -117,9 +137,13 @@ class MahasiswaRepository
     {
         $stmt = $this->db->prepare("DELETE FROM mahasiswa WHERE id = ?");
         $stmt->bind_param('i', $id);
-        $ok = $stmt->execute();
+
+        if (!$stmt->execute()) {
+            throw new Exception('Query DELETE gagal: ' . $stmt->error);
+        }
+
         $stmt->close();
 
-        return $ok;
+        return true;
     }
 }
